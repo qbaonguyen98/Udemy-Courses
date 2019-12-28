@@ -1,0 +1,21 @@
+/* 
+    when using float, an element IS PUSHED to the left or the right
+
+    --> allow OTHER/FOLLOWING elements to wrap around it
+*/
+
+div {
+    width: 100px;
+    height: 100px;
+    text-align: center;
+}
+
+.blue-box {
+    background-color: blue;
+    float: left;
+}
+
+.green-box {
+    background-color: green;
+    float: left;
+}

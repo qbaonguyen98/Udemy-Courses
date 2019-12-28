@@ -1,0 +1,19 @@
+/* 
+    relative:   the position of an element is determined by other elements
+
+    absolute:   the element can be positioned anywhere INSIDE its parent elements
+*/
+
+/*
+    To use the 'absolute' property --> make sure the parent element is positioned 'relative'
+*/
+
+.post {
+    position: relative;
+}
+
+.date {
+    position: absolute;
+    top: 0;                  
+    right: 30px;        /* means that: it must have 30px space to the right side */
+}
