@@ -1,0 +1,15 @@
+/* 
+    :first-child
+
+    --> only select the element if it is the first child of its parent
+
+    example:    p:first-child {
+                
+                }
+*/
+
+/*
+    :last-child 
+
+    --> similar
+*/
