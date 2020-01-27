@@ -133,8 +133,30 @@ var UIController = (function() {
         expenses: '.budget__expenses--value',
         percentage: '.budget__expenses--percentage',
         container: '.container',
-        itemPercentage: '.item__percentage'
+        itemPercentage: '.item__percentage',
+        monthLabel: '.budget__title--month'
     };
+
+    var formatNumber = function(num, type) {
+        var numSplit, int, dec;
+
+        // Make num = xxx.yy
+        num = Math.abs(num);
+        num = num.toFixed(2);
+
+        // Separate int and dec part
+        numSplit = num.split('.');
+        int = numSplit[0];
+        dec = numSplit[1];
+
+        // Format the int --> x,xxx or yy,yyy
+        if (int.length > 3) {
+            int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
+        }
+
+        return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
+    };
+
     return {
         getInput: function() {
             return {
@@ -182,7 +204,7 @@ var UIController = (function() {
             // replace the placeholder text with some actual data
             newHtml = html.replace('%id%', objItem.id);
             newHtml = newHtml.replace('%description%', objItem.description);
-            newHtml = newHtml.replace('%value%', objItem.value);
+            newHtml = newHtml.replace('%value%', formatNumber(objItem.value, type));
 
             // insert the HTML into the DOM
             listElement.insertAdjacentHTML('beforeend', newHtml);
@@ -203,9 +225,12 @@ var UIController = (function() {
             fieldsArr[0].focus();   // to focus on the description input field
         },
         displayBudget: function(objBudget) {
-            document.querySelector(DOMStrings.budget).textContent = objBudget.budget;
-            document.querySelector(DOMStrings.income).textContent = objBudget.totalIncome;
-            document.querySelector(DOMStrings.expenses).textContent = objBudget.totalExpenses;
+            var type;
+            (objBudget.budget >= 0) ? type = 'inc': type = 'exp';
+
+            document.querySelector(DOMStrings.budget).textContent = formatNumber(objBudget.budget, type);
+            document.querySelector(DOMStrings.income).textContent = formatNumber(objBudget.totalIncome, 'inc');
+            document.querySelector(DOMStrings.expenses).textContent = formatNumber(objBudget.totalExpenses, 'exp');
             if (objBudget.percentage > 0) {
                 document.querySelector(DOMStrings.percentage).textContent = objBudget.percentage + '%';
             } else {
@@ -222,6 +247,31 @@ var UIController = (function() {
                     current.textContent = '---';
                 }
             });
+        },
+        displayMonth: function() {
+            var now, months, month, year;
+            months = ['January', 'February', 'Match', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            // Get the current day
+            now = new Date(); 
+            month = now.getMonth();     // zero-based
+            year = now.getFullYear();
+
+            document.querySelector(DOMStrings.monthLabel).textContent = months[month] + ', ' + year;
+        },
+        focusType: function() {
+
+            var fields = document.querySelectorAll(
+                DOMStrings.inputType + ',' +
+                DOMStrings.inputDescription + ',' +
+                DOMStrings.inputValue
+            );
+
+            fields.forEach(function(current) {
+                current.classList.toggle('red-focus');
+            })
+
+            document.querySelector(DOMStrings.inputBtn).classList.toggle('red');
         }
     };
 })();
@@ -241,6 +291,8 @@ var controller = (function(budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);    // for event delegation
+
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.focusType);
     };
 
     var updateBudget = function() {
@@ -314,6 +366,7 @@ var controller = (function(budgetCtrl, UICtrl) {
     return {
         init: function() {
             console.log('app started');
+            UIController.displayMonth();
             setupEventListeners();
         }
     };

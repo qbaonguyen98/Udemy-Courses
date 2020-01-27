@@ -25,3 +25,7 @@
 ## If we use 'display: flex' on an element that has no child ?
 
     The content of it will become a flex item
+
+## How to vertically center content of an element ?
+
+    Use flexbox
